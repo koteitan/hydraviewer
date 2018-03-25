@@ -22,52 +22,36 @@ var dothemall=function(){
 };
 
 /*---------------------------
-  input:
-    str = input string:
-      title, amount, color\n
-      title, amount, color\n
-      title, amount, color\n
-      title, amount, color\n
-      ...
-  output:
-    a[l] = [title, amount, color, index]
-    k[l] = amount
 ---------------------------*/
-var parseText=function(str){
-  var a=[];
-  var k=[];
-  var indata=str.split("\n");
-  for(var l=0;l<indata.length;l++){
-    var row=indata[l].split(",");
-    if(row.length==3){
-      a.push([
-        row[0].trim(),
-        parseFloat(row[1]),
-        row[2].trim()]);
-      k.push(parseFloat(row[1]));
-    }else if(row.length==2){
-      //without color
-      a.push([
-        row[0].trim(),
-        parseFloat(row[1]),
-        '']);
-      k.push(parseFloat(row[1]));
-    }
+var parseMultiMatrices=function(str){
+  var a=str.split("\n");
+  var mm=new Array(a.length);
+  for(var m=0;m<a.length;m++){
+    mm[m]=parseAMatrix(a[m]);
   }
-  items = a.length;
-  if(howtosort[1].checked){
-    var idx=k.sorti();
-    var a0=a.clone();
-    var k0=k.clone();
-    for(var l=0;l<a.length;l++){
-      a[l]=a0[idx[l]];
-      k[l]=k0[idx[l]];
-    }
-  }
+  return mm;
+}
+var parseAMatrix=function(str){
+  var m=[];
+  var a=str.split("\n");
   for(var l=0;l<a.length;l++){
-    a[l].push(l);
+    var r=parseAColumn(a[l]);
+    m.push(r);
   }
-  return [a,k];
+  return m;
+}
+var parseAColumn=function(str){
+  var a=[];
+  //              1      2   3   4
+  var r = /^(\s*\()(.*?)(\))(.*)/;
+  var m=str.match(r);
+  while(m!=null){
+    a.push(m[2].split(","));
+    str=m[4];
+    if(str=="")break;
+    m=str.match(r);
+  }
+  return a;
 }
 
 /*---------------------------
