@@ -87,6 +87,10 @@ var drawTree=function(mm){
       //resize canvas
       outcanvas.width=usedsize[0];
       outcanvas.height=usedsize[1];
+      //draw background
+      ctx.fillStyle="white";
+      ctx.fillRect(0,0,outcanvas.width,outcanvas.height);
+      //draw trees
       var root=[psh.marginsall[0][0], psh.marginsall[0][1]];
       for(mmi=0;mmi<mm.length;mmi++){
         var m=mm[mmi];
@@ -96,7 +100,7 @@ var drawTree=function(mm){
         if(mmi>0)root[1]+=psh.marginmatrices;       // margin for matrices
         //draw root
         var text   = "r";
-        ctx.strokeStyle='black';
+        ctx.fillStyle='black';
         ctx.font = String(psh.fontsize)+'px Segoe UI';
         textwidth  = ctx.measureText(text).width;
         textheight = psh.fontsize;
@@ -143,7 +147,7 @@ var drawTree=function(mm){
           
           // stroke text
           text   = String(m[ci][1]);
-          ctx.strokeStyle='black';
+          ctx.fillStyle='black';
           ctx.font = String(psh.fontsize)+'px Segoe UI';
           textwidth  = ctx.measureText(text).width;
           textheight = psh.fontsize;
