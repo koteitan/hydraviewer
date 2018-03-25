@@ -5,7 +5,11 @@ var allmax;
 var allmin;
 var dothemall=function(){
   //parse
-  var mm=parseMultiMatrices(intext.value);
+  var str=intext.value;
+  str=str.replace(/^\n*/g, "");
+  str=str.replace(/\n*$/g, "");
+  str=str.replace(/\n+/g, "\n");
+  var mm=parseMultiMatrices(str);
   // draw
   usedsize=drawTree(mm);
   outImg();
