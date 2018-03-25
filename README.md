@@ -1,12 +1,9 @@
 # Hydra Viewer by JavaScript
 
-Please put a list of pair sequence system you like in the textarea.
+Please put a list of pair sequence system you like in the textarea. The Hydra will be drawn on this page. You can save the image of that in PNG format by right-click.
 
-The Hydra will be drawn on this page.
+Ask request on <a href="https://github.com/koteitan/hydraviewer/projects/1">the project page</a>.
 
-You can save the image of that in PNG format by right-click.
-
-Test site:
-http://www.ukaibutton.com/hydraviewer/
+Test site: http://www.ukaibutton.com/hydraviewer/
 
 ![screen shot](/ss.jpg)
