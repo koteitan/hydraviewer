@@ -47,7 +47,16 @@ var parseAMatrix=function(str){
   }
   return a;
 }
-
+/* findParent(m,ci) returns index of parent of ci.
+   It returns -1 when the parent of ci cannot be found. */
+var findParent=function(m, ci){
+  for(var c=ci-1;c>=0;c--){
+    if(m[c][0]==m[ci][0]-1){
+      return c;
+    }
+  }
+  return -1;
+}
 var drawtype = "pair sequence hydra";
 var psh=new function(){};
 psh.radius     = 10;
@@ -75,7 +84,6 @@ var drawTree=function(mm){
       outcanvas.width=usedsize[0];
       outcanvas.height=usedsize[1];
       var root=[psh.marginsall[0][0], psh.marginsall[0][1]];
-      var branchr = psh.shift-psh.radius;
       for(mmi=0;mmi<mm.length;mmi++){
         var m=mm[mmi];
         var levels = (transpose(m)[0]).max()+1;
@@ -94,17 +102,41 @@ var drawTree=function(mm){
           var level  = m[ci][0];
           var cx     = root[0]+(ci   +1)*psh.colshift;
           var cy     = root[1]-(level+1)*psh.levelshift;
-          // stroke arc
+          
+          // stroke circle
           ctx.strokeStyle="rgba(0,0,0,0.3)";
           ctx.lineWidth  = 2;
           ctx.beginPath();
-          ctx.arc(Math.floor(cx),Math.floor(cy),psh.radius,0,2*Math.PI,false);
+          ctx.arc(cx,cy,psh.radius,0,2*Math.PI,false);
           ctx.stroke();
           ctx.strokeStyle='black';
           ctx.lineWidth  = 1;
           ctx.beginPath();
-          ctx.arc(Math.floor(cx),Math.floor(cy),psh.radius,0,2*Math.PI,false);
+          ctx.arc(cx,cy,psh.radius,0,2*Math.PI,false);
           ctx.stroke();
+          
+          // stroke branch
+          var branchr = psh.levelshift-psh.radius; // radius of branch
+          var pi      = findParent(m,ci);     // parent
+          var px     = root[0]+(pi      +1)*psh.colshift;
+          var py;
+          if(pi>=0){
+              py     = root[1]-(m[pi][0]+1)*psh.levelshift;
+          }else{//branch for root
+              py     = root[1];
+          }
+          ctx.strokeStyle='black';
+          ctx.lineWidth  = 1;
+          ctx.beginPath();
+          ctx.arc(cx-branchr, cy+psh.radius, branchr, 0, Math.PI/2,false);
+          ctx.stroke();
+          ctx.strokeStyle='black';
+          ctx.lineWidth  = 1;
+          ctx.beginPath();
+          ctx.moveTo(cx-psh.radius, cy+branchr+psh.radius);
+          ctx.lineTo(px+branchr, py);
+          ctx.stroke();
+          
           // stroke text
           text   = String(m[ci][1]);
           ctx.strokeStyle='black';
