@@ -9,58 +9,13 @@ var dothemall=function(){
   str=str.replace(/^\n*/g, "");
   str=str.replace(/\n*$/g, "");
   str=str.replace(/\n+/g, "\n");
-  var mm=parseMultiMatrices(str);
+  var mm=Bms.multiparse(str);
   // draw
   usedsize=drawTree(mm);
   outImg();
 };
 
-/*---------------------------
-parseMultiMatrices("(0,1,2)(3,4,5)\n(6,7,8)(9,10,11)")
-= [[[0,1,2],[3,4,5]],[[6,7,8],[9,10,11]]] 
----------------------------*/
-var parseMultiMatrices=function(str){
-  var a=str.split("\n");
-  var mm=new Array(a.length);
-  for(var m=0;m<a.length;m++){
-    mm[m]=parseAMatrix(a[m]);
-  }
-  return mm;
-}
-/*---------------------------
-parseAMatrix("(0,1,2)(3,4,5)") = [[0,1,2],[3,4,5]] 
----------------------------*/
-var parseAMatrix=function(str){
-  var a=[[]];
-  //              1  2   3   4
-  var r = /^(\s*\()(.*?)(\))(.*)/;
-  var m=str.match(r);
-  var ci=0;
-  while(m!=null){
-    var c=m[2].split(",");
-    for(ri=0;ri<c.length;ri++){
-      a[ci].push(parseInt(c[ri],10));
-    }
-    str=m[4];
-    if(str=="")break;
-    m=str.match(r);
-    if(m!=null){
-      a.push([]);
-      ci++;
-    }
-  }
-  return a;
-}
-/* findParent(m,ci) returns index of parent of ci.
-   It returns -1 when the parent of ci cannot be found. */
-var findParent=function(m, ci){
-  for(var c=ci-1;c>=0;c--){
-    if(m[c][0]==m[ci][0]-1){
-      return c;
-    }
-  }
-  return -1;
-}
+
 var drawtype = "pair sequence hydra";
 var psh=new function(){};
 psh.radius     = 10;
@@ -79,7 +34,7 @@ var drawTree=function(mm){
       var maxcols = 0;
       for(mmi=0;mmi<matrices;mmi++){
         var m=mm[mmi];
-        maxcols  = Math.max(maxcols, m.length);
+        maxcols  = Math.max(maxcols, m.cols());
       }
       var upperbound=new Array(matrices);
       var lowerbound=new Array(matrices);
@@ -89,8 +44,8 @@ var drawTree=function(mm){
         lowerbound[mmi]=new Array(maxcols);
         for(x=0;x<maxcols;x++){
           upperbound[mmi][x]=1;
-          if(x<m.length){
-            lowerbound[mmi][x]=m[x][0];
+          if(x<m.cols()){
+            lowerbound[mmi][x]=m.s[x][0];
           }else{
             lowerbound[mmi][x]=+Infinity;
           }
@@ -98,14 +53,14 @@ var drawTree=function(mm){
       }
       for(mmi=0;mmi<matrices;mmi++){
         var m=mm[mmi];
-        for(cx=0;cx<m.length;cx++){
-          upperbound[mmi][cx] = m[cx][0]+1; //length of root to child
-          var px = findParent(m,cx);
+        for(cx=0;cx<m.cols();cx++){
+          upperbound[mmi][cx] = m.s[cx][0]+1; //length of root to child
+          var px = m.findParent(cx);
           if(px>=0){
             // fill for branch at parent to child in x axis
             for(cx2=px;cx2<=cx;cx2++){
               // fill for branch at a level lower than child in y axis (+1 for root)
-              lowerbound[mmi][cx2]=Math.min(lowerbound[mmi][cx2], m[px][0]+1);
+              lowerbound[mmi][cx2]=Math.min(lowerbound[mmi][cx2], m.s[px][0]+1);
             }
           }else{
             // fill for branch at parent(=root) to child in x axis
@@ -157,7 +112,7 @@ var drawTree=function(mm){
       //draw trees
       for(mmi=0;mmi<matrices;mmi++){
         var m=mm[mmi];
-        var levels = (transpose(m)[0]).max()+1;
+        var levels = (transpose(m.s)[0]).max()+1;
         //draw root
         var text   = "r";
         ctx.fillStyle='black';
@@ -166,8 +121,8 @@ var drawTree=function(mm){
         textheight = psh.fontsize;
         ctx.fillText(text,rootx_pixel-textwidth/2,rooty_pixel[mmi]+textheight/2*0.7);
         //draw columns
-        for(ci=0;ci<m.length;ci++){
-          var level  = m[ci][0];
+        for(ci=0;ci<m.cols();ci++){
+          var level  = m.s[ci][0];
           var cx     = rootx_pixel     +(ci   +1)*psh.colshift;
           var cy     = rooty_pixel[mmi]-(level+1)*psh.levelshift;
           
@@ -185,11 +140,11 @@ var drawTree=function(mm){
           
           // stroke branch
           var branchr = psh.levelshift-psh.radius; // radius of branch
-          var pi      = findParent(m,ci);     // parent
+          var pi      = m.findParent(ci);     // parent
           var px     = rootx_pixel+(pi      +1)*psh.colshift;
           var py;
           if(pi>=0){
-              py     = rooty_pixel[mmi]-(m[pi][0]+1)*psh.levelshift;
+              py     = rooty_pixel[mmi]-(m.s[pi][0]+1)*psh.levelshift;
           }else{//branch for root
               py     = rooty_pixel[mmi];
           }
@@ -206,7 +161,7 @@ var drawTree=function(mm){
           ctx.stroke();
           
           // stroke text
-          text   = String(m[ci][1]);
+          text   = String(m.s[ci][1]);
           ctx.fillStyle='black';
           ctx.font = String(psh.fontsize)+'px Segoe UI';
           textwidth  = ctx.measureText(text).width;
