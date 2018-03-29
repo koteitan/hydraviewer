@@ -1,3 +1,14 @@
+Array.prototype.dims = function(){
+  if(this.length>0){
+    if(this[0] instanceof Array){
+      return this[0].dims()+1;
+    }else{
+      return 1;
+    }
+  }else{
+    return 1;
+  }
+}
 Array.prototype.min = function(){
   var ret=this[0];
   for(var i=1;i<this.length;i++){
