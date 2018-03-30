@@ -6,11 +6,11 @@ var Bms=function(_s){
 };
 Bms.prototype.toString=function(){
   var str="";
-  for(var c=0;c<0;c++){
+  for(var c=0;c<this.cols();c++){
     str+="(";
-    for(var r=0;r<this.s.length;r++){
+    for(var r=0;r<this.rows();r++){
       str += this.s[c][r];
-      if(r!=this.s[c].length)str += ",";
+      if(r!=this.rows()-1)str += ",";
     }
     str+=")";
   }
@@ -67,5 +67,9 @@ Bms.parse=function(str){
       ci++;
     }
   }
-  return new Bms(a);
+  if(a.dims==1){
+    return new Bms([a]); // primitive sequence
+  }else{
+    return new Bms(a);
+  }
 }

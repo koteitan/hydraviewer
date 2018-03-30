@@ -162,6 +162,7 @@ var drawTree=function(mm){
           
           // stroke text
           text   = String(m.s[ci][1]);
+          if(text==="undefined") text="";
           ctx.fillStyle='black';
           ctx.font = String(psh.fontsize)+'px Segoe UI';
           textwidth  = ctx.measureText(text).width;
