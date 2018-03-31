@@ -1,9 +1,9 @@
 /* Bashicu Matrix
-  in: _s[][] = 
-*/
+  in: _s[c][r] c=column index r=row index */
 var Bms=function(_s){
     this.s=_s;
 };
+/* convert to string */
 Bms.prototype.toString=function(){
   var str="";
   for(var c=0;c<this.cols();c++){
@@ -16,7 +16,7 @@ Bms.prototype.toString=function(){
   }
   return str;
 }
-/* findParent(m,ci) returns index of parent of ci.
+/* m.findParent(ci) returns index of parent of ci.
    It returns -1 when the parent of ci cannot be found. */
 Bms.prototype.findParent=function(ci){
   if(ci===undefined)ci=this.length()-1;
@@ -33,10 +33,9 @@ Bms.prototype.cols=function(){
 Bms.prototype.rows=function(){
   return this.s[0].length;
 }
-/*---------------------------
+/* Parse multiple matrices
 Bms.multiparse("(0,1,2)(3,4,5)\n(6,7,8)(9,10,11)")
-= [[[0,1,2],[3,4,5]],[[6,7,8],[9,10,11]]] 
----------------------------*/
+= [ [ [0,1,2],[3,4,5]],[[6,7,8],[9,10,11]  ] ]  */
 Bms.multiparse=function(str){
   var a=str.split("\n");
   var mm=new Array(a.length);
@@ -45,9 +44,8 @@ Bms.multiparse=function(str){
   }
   return mm;
 }
-/*---------------------------
-parse("(0,1,2)(3,4,5)") = Bms([[0,1,2],[3,4,5]])
----------------------------*/
+/* parse matrix from String
+parse("(0,1,2)(3,4,5)") = Bms([[0,1,2],[3,4,5] ]) */
 Bms.parse=function(str){
   var a=[[]];
   //              1  2   3   4
