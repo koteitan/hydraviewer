@@ -54,9 +54,8 @@ Bms.parse=function(str){
   var ci=0;
   while(m!=null){
     var c=m[2].split(",");
-    for(ri=0;ri<c.length;ri++){
-      a[ci].push(parseInt(c[ri],10));
-    }
+    a[ci].push(parseInt(c[0],10));
+    a[ci].push(         c[1]    );
     str=m[4];
     if(str=="")break;
     m=str.match(r);
