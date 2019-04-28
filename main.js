@@ -122,17 +122,18 @@ var drawTree=function(mm){
         ctx.fillText(text,rootx_pixel-textwidth/2,rooty_pixel[mmi]+textheight/2*0.7);
         //draw columns
         for(ci=0;ci<m.cols();ci++){
+
+          var pi = m.findParent(ci); // parent
+          mycolor     = 'black';
+          parentcolor = 'black';
+          if(          m.s[ci].length>=2 && m.s[ci][2]!==undefined) mycolor     = m.s[ci][2];
+          if(pi!=-1 && m.s[pi].length>=2 && m.s[pi][2]!==undefined) parentcolor = m.s[pi][2];
           var level  = m.s[ci][0];
           var cx     = rootx_pixel     +(ci   +1)*psh.colshift;
           var cy     = rooty_pixel[mmi]-(level+1)*psh.levelshift;
           
           // stroke circle
-          ctx.strokeStyle="rgba(0,0,0,0.3)";
-          ctx.lineWidth  = 2;
-          ctx.beginPath();
-          ctx.arc(cx,cy,psh.radius,0,2*Math.PI,false);
-          ctx.stroke();
-          ctx.strokeStyle='black';
+          ctx.strokeStyle=mycolor;
           ctx.lineWidth  = 1;
           ctx.beginPath();
           ctx.arc(cx,cy,psh.radius,0,2*Math.PI,false);
@@ -140,7 +141,6 @@ var drawTree=function(mm){
           
           // stroke branch
           var branchr = psh.levelshift-psh.radius; // radius of branch
-          var pi      = m.findParent(ci);     // parent
           var px     = rootx_pixel+(pi      +1)*psh.colshift;
           var py;
           if(pi>=0){
@@ -148,12 +148,12 @@ var drawTree=function(mm){
           }else{//branch for root
               py     = rooty_pixel[mmi];
           }
-          ctx.strokeStyle='black';
+          ctx.strokeStyle=parentcolor;
           ctx.lineWidth  = 1;
           ctx.beginPath();
           ctx.arc(cx-branchr, cy+psh.radius, branchr, 0, Math.PI/2,false);
           ctx.stroke();
-          ctx.strokeStyle='black';
+          ctx.strokeStyle=parentcolor;
           ctx.lineWidth  = 1;
           ctx.beginPath();
           ctx.moveTo(cx-psh.radius, cy+branchr+psh.radius);
@@ -163,7 +163,7 @@ var drawTree=function(mm){
           // stroke text
           text   = String(m.s[ci][1]);
           if(text==="undefined") text="";
-          ctx.fillStyle='black';
+          ctx.fillStyle=mycolor;
           ctx.font = String(psh.fontsize)+'px Segoe UI';
           textwidth  = ctx.measureText(text).width;
           textheight = psh.fontsize;

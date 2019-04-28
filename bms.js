@@ -55,7 +55,8 @@ Bms.parse=function(str){
   while(m!=null){
     var c=m[2].split(",");
     a[ci].push(parseInt(c[0],10));
-    a[ci].push(         c[1]    );
+    if(a[ci].length>=1) a[ci].push(c[1]); /* for label */
+    if(a[ci].length>=2) a[ci].push(c[2]); /* for color */
     str=m[4];
     if(str=="")break;
     m=str.match(r);
